@@ -28,7 +28,7 @@ self.addEventListener('fetch',event=>{
    const stored=await shell.match(canonical(request.url));
    if(stored)return stored;
    if(request.mode==='navigate'){
-     return new Response('<!doctype html><html lang="en"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Offline | My Daily Feed</title><main style="font:18px/1.6 system-ui;padding:28px"><h1>This article is not saved offline</h1><p>Reconnect to the internet, or return to your saved articles.</p><a href="./index.html#saved">Saved articles</a></main></html>',{status:503,headers:{'Content-Type':'text/html; charset=utf-8'}});
+     return new Response('<!doctype html><html lang="en"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Offline | My Daily Feed</title><main style="font:18px/1.6 system-ui;padding:28px"><h1>This article is not saved offline</h1><p>Reconnect to the internet, or return to your saved articles.</p><a href="' + BASE.pathname + 'index.html#saved">Saved articles</a></main></html>',{status:503,headers:{'Content-Type':'text/html; charset=utf-8'}});
    }
    return Response.error();
   }

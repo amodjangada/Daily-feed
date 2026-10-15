@@ -61,7 +61,12 @@ function card(doc,featured=false){
 function renderToday(){
  const sorted=[...docs].sort((a,b)=>day(b).localeCompare(day(a))||names.findIndex(x=>x[1]===category(a))-names.findIndex(x=>x[1]===category(b)));
  latest=sorted.length?day(sorted[0]):'';
- const today=sorted.filter(d=>day(d)===latest);
+ // Show one current guide per subject; keep superseded same-day versions in Archive.
+ const candidates=sorted.filter(d=>day(d)===latest)
+   .sort((a,b)=>b.path.length-a.path.length);
+ const usedCategories=new Set();
+ const today=candidates.filter(d=>{const c=category(d);if(usedCategories.has(c))return false;usedCategories.add(c);return true})
+   .sort((a,b)=>names.findIndex(x=>x[1]===category(a))-names.findIndex(x=>x[1]===category(b)));
  const featured=$('#featured-slot'),list=$('#today-list'),recent=$('#recent-slot');
  featured.replaceChildren();list.replaceChildren();recent.replaceChildren();
  $('#today-title').textContent=latest?'Latest edition':'Today’s reading';
