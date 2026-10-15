@@ -38,6 +38,9 @@ jobs:
               candidates=list(unpack.rglob("index.html"))
               source=min((c.parent for c in candidates),key=lambda p:len(p.parts)) if candidates else unpack
               shutil.copytree(source,out,dirs_exist_ok=True)
+          repo_reports=pathlib.Path("reports")
+          if repo_reports.exists():
+              shutil.copytree(repo_reports,out/"reports",dirs_exist_ok=True)
           shutil.copy2("index.html",out/"index.html")
           docs=[]
           for f in sorted(out.rglob("*.html"),reverse=True):
