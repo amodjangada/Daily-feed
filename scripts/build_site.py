@@ -2,6 +2,7 @@
 """Build My Daily Feed with only Python standard libraries."""
 from __future__ import annotations
 import html
+import hashlib
 import json
 import pathlib
 import re
@@ -63,7 +64,7 @@ def make_png(name: str, size: int) -> None:
         for x in range(size):
             xi, yi = int((x - left) // cell), int((y - top) // cell)
             on = 0 <= xi < 12 and 0 <= yi < 7 and glyph[yi][xi] == "1"
-            data.extend((250, 249, 246) if on else (23, 102, 92))
+            data.extend((243, 230, 214) if on else (133, 65, 46))
     def chunk(typ: bytes, value: bytes) -> bytes:
         return struct.pack(">I", len(value)) + typ + value + struct.pack(">I", zlib.crc32(typ + value))
     image = b"\x89PNG\r\n\x1a\n"
@@ -118,6 +119,18 @@ def build() -> list[dict]:
         docs.append(dict(title=title, path=rel, date=date, category=group))
     docs.sort(key=lambda d: (d["date"], d["path"]), reverse=True)
     (OUT / "feeds.json").write_text(json.dumps(docs, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    # Fingerprint the site shell to update installed Home Screen apps.
+    fingerprint = hashlib.sha256()
+    for name in ("index.html", "assets/site.css", "assets/reader.css",
+                 "assets/app.js", "assets/reader.js", "service-worker.js",
+                 "manifest.webmanifest", "assets/landscape.svg"):
+        fingerprint.update((OUT / name).read_bytes())
+    version = fingerprint.hexdigest()[:12]
+    homepage = OUT / "index.html"
+    markup = homepage.read_text(encoding="utf-8")
+    markup = markup.replace("</head>", f'<meta name="mdf-build" content="{version}"></head>', 1)
+    homepage.write_text(markup, encoding="utf-8")
+    (OUT / "version.json").write_text(json.dumps({"version": version}) + "\n", encoding="utf-8")
     (OUT / ".nojekyll").touch()
     print(f"Site: {OUT}")
     print(f"Published reports: {len(docs)}")

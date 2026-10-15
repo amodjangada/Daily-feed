@@ -1,22 +1,61 @@
-/* Applies to old and new article HTML without altering article text or references. */
-:root{--reader-size:18px;--reader-lh:1.65}
-html{scroll-padding-top:82px}html[data-theme="dark"]{color-scheme:dark}
-body.mdf-reader{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;font-size:var(--reader-size)!important;line-height:var(--reader-lh)!important;color:var(--ink)!important;background:var(--bg)!important;-webkit-text-size-adjust:100%}
-body.mdf-reader header,body.mdf-reader header.hero{background:var(--bg)!important;color:var(--ink)!important;padding:22px 20px 22px!important;border-bottom:1px solid var(--line)!important}
-body.mdf-reader header .wrap{max-width:710px;margin:auto}body.mdf-reader header p,body.mdf-reader header small,body.mdf-reader header .eyebrow{color:var(--muted)!important}
-body.mdf-reader header h1{font-size:clamp(31px,8vw,42px)!important;line-height:1.16!important;letter-spacing:-.04em!important;color:var(--ink)!important;margin:14px 0!important}
+/* Shared reader skin for existing standalone reports; preserves article text and evidence. */
+:root{--reader-size:19px;--reader-lh:1.67}
+html{scroll-padding-top:85px}
+body.mdf-reader{font-family:var(--font-editorial)!important;font-size:var(--reader-size)!important;line-height:var(--reader-lh)!important;color:var(--ink)!important;background:var(--bg)!important;-webkit-text-size-adjust:100%}
+body.mdf-reader header,body.mdf-reader header.hero{background:var(--bg)!important;color:var(--ink)!important;padding:26px 19px 28px!important;border-bottom:1px solid var(--line)!important}
+body.mdf-reader header .wrap{max-width:690px;margin:auto}
+body.mdf-reader header p{font-family:var(--font-editorial)!important;color:var(--muted)!important;font-size:clamp(17px,4.2vw,20px)!important;line-height:1.5!important}
+body.mdf-reader header small,body.mdf-reader header .eyebrow{color:var(--forest)!important;font-family:var(--font-ui)!important;letter-spacing:.09em}
+body.mdf-reader header h1{font-family:var(--font-editorial)!important;font-size:clamp(32px,8vw,42px)!important;line-height:1.13!important;letter-spacing:-.032em!important;color:var(--ink)!important;margin:15px 0!important}
 body.mdf-reader .mdf-legacy-back{display:none!important}
-body.mdf-reader main{width:min(100%,750px)!important;max-width:750px!important;margin:0 auto!important;padding:25px 20px 120px!important;color:var(--ink)!important;background:var(--bg)!important}
-body.mdf-reader main p,body.mdf-reader main li{font-size:var(--reader-size)!important;line-height:var(--reader-lh)!important;overflow-wrap:break-word}
-body.mdf-reader main p{margin:15px 0}body.mdf-reader main h2{font-size:clamp(25px,6vw,30px)!important;line-height:1.25!important;margin-top:43px!important;color:var(--ink)!important;scroll-margin-top:86px}
-body.mdf-reader main h3{font-size:21px!important;line-height:1.35!important;color:var(--ink)!important}body.mdf-reader main li{margin:10px 0}
+body.mdf-reader main{width:min(100%,735px)!important;max-width:735px!important;margin:0 auto!important;padding:24px 19px 120px!important;color:var(--ink)!important;background:var(--bg)!important}
+body.mdf-reader main p,body.mdf-reader main li{font-family:var(--font-editorial)!important;font-size:var(--reader-size)!important;line-height:var(--reader-lh)!important;overflow-wrap:break-word}
+body.mdf-reader main p{margin:15px 0 19px!important;max-width:68ch!important}
+body.mdf-reader main h2{font-family:var(--font-editorial)!important;font-size:clamp(26px,6vw,32px)!important;line-height:1.24!important;font-weight:700!important;margin-top:48px!important;color:var(--ink)!important;scroll-margin-top:87px;border-bottom:1px solid var(--line)!important;padding-bottom:12px}
+body.mdf-reader main h3{font-family:var(--font-editorial)!important;font-size:22px!important;line-height:1.33!important;color:var(--ink)!important;margin-top:33px!important}
+body.mdf-reader main li{margin:9px 0!important}
 body.mdf-reader main a{color:var(--accent)!important;text-decoration-thickness:1px;text-underline-offset:3px;overflow-wrap:anywhere}
-body.mdf-reader main nav,body.mdf-reader main .panel,body.mdf-reader main .fact,body.mdf-reader main .diagram,body.mdf-reader main .note,body.mdf-reader main .steps span{background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--line)!important}
-body.mdf-reader main nav{border-radius:14px!important;padding:14px 17px!important;line-height:2.1}
-body.mdf-reader .step{background:var(--surface)!important;color:var(--ink)!important;border-color:var(--line)!important}
-body.mdf-reader table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse}body.mdf-reader th,body.mdf-reader td{color:var(--ink);border-color:var(--line)!important}body.mdf-reader th{background:var(--accent-bg)!important}body.mdf-reader details{border-color:var(--line)!important}body.mdf-reader summary{min-height:44px;padding:12px 0;cursor:pointer}
-body.mdf-reader .fact strong{color:var(--accent)!important}body.mdf-reader .bar{background:var(--line)!important}body.mdf-reader .fill{background:var(--accent)!important}
-.mdf-reader-bar{position:sticky;top:0;z-index:40;height:57px;display:flex;align-items:center;justify-content:space-between;gap:6px;padding:6px max(12px,calc((100vw - 730px)/2));background:var(--surface);color:var(--ink);border-bottom:1px solid var(--line)}.mdf-reader-controls{display:flex;gap:4px;align-items:center}.mdf-reader-bar button,.mdf-reader-bar a{display:inline-flex;justify-content:center;align-items:center;min-width:44px;min-height:44px;padding:8px;border:0;background:transparent;color:var(--ink)!important;border-radius:10px;text-decoration:none;font-size:14px;font-weight:750}.mdf-reader-bar .mdf-back{gap:4px;max-width:175px}.mdf-reader-bar button[aria-pressed=true]{color:var(--accent)!important;background:var(--accent-bg)}.mdf-reader-bar button:focus-visible,.mdf-reader-bar a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.mdf-scroll-progress{height:3px;width:100%;position:fixed;top:0;left:0;z-index:45;pointer-events:none;background:transparent}.mdf-scroll-progress>span{display:block;width:0;height:100%;background:var(--accent)}.mdf-reader-settings{position:sticky;top:57px;z-index:39;background:var(--surface);padding:12px 20px;border-bottom:1px solid var(--line);color:var(--ink);display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}.mdf-reader-settings[hidden]{display:none!important}.mdf-reader-settings button{min-width:44px;min-height:44px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px}.mdf-reader-settings label{font-size:14px;font-weight:650}.mdf-reader-settings output{min-width:40px;text-align:center}
-@media(max-width:500px){body.mdf-reader main{padding:20px 18px 105px!important}body.mdf-reader header{padding:20px 18px!important}body.mdf-reader main .facts,body.mdf-reader main .cols{grid-template-columns:1fr!important}}
+body.mdf-reader main nav,body.mdf-reader main .panel,body.mdf-reader main .fact,body.mdf-reader main .diagram,body.mdf-reader main .note,body.mdf-reader main .steps span{
+  background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--line)!important;border-radius:12px!important;
+}
+body.mdf-reader main nav{padding:15px 17px!important;line-height:2.2;font-family:var(--font-ui)!important;font-size:14px!important}
+body.mdf-reader main nav a{display:inline-block;min-height:32px;margin-right:10px}
+body.mdf-reader main .diagram{padding:18px!important;max-width:100%;overflow-x:auto!important}
+body.mdf-reader main .diagram .step,body.mdf-reader main .steps span{
+  background:var(--surface-raised)!important;color:var(--ink)!important;border:1px solid var(--line)!important;
+  font-family:var(--font-ui)!important;font-size:14px!important;line-height:1.55!important;
+}
+body.mdf-reader main .arrow{color:var(--accent)!important;font-weight:700!important}
+body.mdf-reader main .facts,body.mdf-reader main .cols{max-width:100%;min-width:0}
+body.mdf-reader main .fact,body.mdf-reader main .panel{padding:17px!important}
+body.mdf-reader main .fact strong{font-family:var(--font-editorial)!important;color:var(--accent)!important;font-size:28px!important}
+body.mdf-reader main .fact small{color:var(--muted)!important;line-height:1.5}
+body.mdf-reader main .bar{background:var(--line)!important;height:20px!important}
+body.mdf-reader main .fill{background:var(--forest)!important}
+body.mdf-reader main .chartrow label{font-family:var(--font-ui)!important;color:var(--ink)!important;font-size:14px!important}
+body.mdf-reader main .note{border-left:4px solid var(--accent)!important;background:var(--surface-raised)!important;padding:12px 15px!important}
+body.mdf-reader main table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse;font-family:var(--font-ui)!important;font-size:14px!important}
+body.mdf-reader main th,body.mdf-reader main td{color:var(--ink)!important;border-color:var(--line)!important;background:transparent!important}
+body.mdf-reader main th{background:var(--surface)!important;font-weight:750}
+body.mdf-reader main details{border-color:var(--line)!important}
+body.mdf-reader main summary{font-family:var(--font-ui)!important;min-height:44px;padding:12px 0;cursor:pointer;color:var(--ink)!important}
+body.mdf-reader main img,body.mdf-reader main svg{max-width:100%;height:auto}
+body.mdf-reader main figure{max-width:100%;margin:25px 0}
+body.mdf-reader main figcaption{font-family:var(--font-ui);font-size:13px;color:var(--muted);line-height:1.5}
+body.mdf-reader main blockquote{border-left:3px solid var(--accent);margin:24px 0;padding:4px 0 4px 17px;color:var(--muted)}
+.mdf-reader-bar{position:sticky;top:0;z-index:40;min-height:57px;display:flex;align-items:center;justify-content:space-between;gap:6px;padding:6px max(12px,calc((100vw - 730px)/2));background:var(--surface-raised);color:var(--ink);border-bottom:1px solid var(--line);font-family:var(--font-ui)}
+.mdf-reader-controls{display:flex;gap:4px;align-items:center}
+.mdf-reader-bar button,.mdf-reader-bar a{display:inline-flex;justify-content:center;align-items:center;min-width:44px;min-height:44px;padding:8px;border:0;background:transparent;color:var(--ink)!important;border-radius:10px;text-decoration:none;font-size:14px;font-weight:750}
+.mdf-reader-bar .mdf-back{gap:4px;max-width:175px}
+.mdf-reader-bar button[aria-pressed=true]{color:var(--ink)!important;background:var(--sage)}
+.mdf-reader-bar button:focus-visible,.mdf-reader-bar a:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.mdf-scroll-progress{height:4px;width:100%;position:fixed;top:0;left:0;z-index:45;pointer-events:none;background:transparent}
+.mdf-scroll-progress>span{display:block;width:0;height:100%;background:var(--accent)}
+.mdf-reader-settings{position:sticky;top:57px;z-index:39;background:var(--surface-raised);padding:12px 20px;border-bottom:1px solid var(--line);color:var(--ink);display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;font-family:var(--font-ui)}
+.mdf-reader-settings[hidden]{display:none!important}
+.mdf-reader-settings button{min-width:44px;min-height:44px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px}
+.mdf-reader-settings label{font-size:14px;font-weight:650}
+.mdf-reader-settings output{min-width:40px;text-align:center}
+@media(max-width:500px){body.mdf-reader main{padding:20px 18px 105px!important}body.mdf-reader header{padding:21px 18px!important}body.mdf-reader main .facts,body.mdf-reader main .cols{grid-template-columns:minmax(0,1fr)!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}}
 @media print{.mdf-reader-bar,.mdf-reader-settings,.mdf-scroll-progress{display:none!important}body.mdf-reader header{border:none!important}}

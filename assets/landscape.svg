@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 260" role="img" aria-label="Decorative earth-toned landscape">
+<rect width="1100" height="260" fill="#E8D8C2"/>
+<circle cx="831" cy="71" r="59" fill="#C58962" opacity=".9"/>
+<path d="M0 131Q132 105 248 133T524 132T803 128T1100 119V260H0Z" fill="#D1B99F"/>
+<path d="M0 181Q180 121 304 169T569 163T861 177T1100 146V260H0Z" fill="#B3AD91"/>
+<path d="M0 215Q150 176 290 209T580 199T867 204T1100 193V260H0Z" fill="#667260"/>
+<g fill="none" stroke="#85412E" stroke-width="2.2" opacity=".75">
+<path d="M80 247Q212 189 321 223T562 219T859 232T1100 209"/>
+<path d="M35 259Q213 208 326 243T573 236T862 250"/>
+</g>
+<g stroke="#3D5547" stroke-width="3" stroke-linecap="round" fill="none">
+<path d="M136 194v-70M136 153c-20-9-32-20-35-32M136 169c23-11 31-23 37-40M136 141c10-7 16-17 17-28"/>
+<path d="M1015 194v-56M1015 163c-16-5-25-18-27-29M1015 148c12-7 22-17 25-29"/>
+</g>
+<g fill="#3D5547" opacity=".78"><ellipse cx="132" cy="117" rx="37" ry="13" transform="rotate(-18 132 117)"/><ellipse cx="166" cy="128" rx="25" ry="11" transform="rotate(20 166 128)"/><ellipse cx="1005" cy="132" rx="23" ry="10" transform="rotate(22 1005 132)"/><ellipse cx="1037" cy="118" rx="21" ry="10" transform="rotate(-22 1037 118)"/></g>
+</svg>

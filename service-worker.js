@@ -1,8 +1,8 @@
 /* Network-first updates. Cache the shell and user-saved articles, not all visited reports. */
-const VERSION='mdf-v3-20261015';
+const VERSION='mdf-v4-terracotta-linen';
 const SHELL=VERSION+'-shell', SAVED='mdf-saved-offline-v1';
 const BASE=new URL(self.registration.scope);
-const SHELL_FILES=['./','./index.html','./assets/site.css','./assets/app.js','./assets/reader.css','./assets/reader.js','./manifest.webmanifest','./assets/icon.svg','./assets/apple-touch-icon.png','./assets/icon-192.png','./assets/icon-512.png','./feeds.json'];
+const SHELL_FILES=['./','./index.html','./assets/site.css','./assets/app.js','./assets/reader.css','./assets/reader.js','./manifest.webmanifest','./assets/icon.svg','./assets/landscape.svg','./assets/apple-touch-icon.png','./assets/icon-192.png','./assets/icon-512.png','./feeds.json'];
 const canonical=url=>new Request(new URL(url,BASE).origin+new URL(url,BASE).pathname,{method:'GET'});
 const shellPaths=new Set(SHELL_FILES.map(p=>new URL(p,BASE).pathname));
 self.addEventListener('install',event=>event.waitUntil(caches.open(SHELL).then(cache=>cache.addAll(SHELL_FILES.map(p=>new URL(p,BASE)))).then(()=>self.skipWaiting())));

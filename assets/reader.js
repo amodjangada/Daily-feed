@@ -35,26 +35,26 @@ refreshSave();
 document.getElementById('mdf-options').addEventListener('click',()=>{
  panel.hidden=!panel.hidden;document.getElementById('mdf-options').setAttribute('aria-expanded',String(!panel.hidden));
 });
-function currentTheme(){const t=local(themeKey,'system');return ['system','light','dark'].includes(t)?t:'system'}
+function currentTheme(){const t=local(themeKey,'light');return ['system','light','dark'].includes(t)?t:'system'}
 function theme(){
  const selected=currentTheme(),mode=selected==='system'?(media.matches?'dark':'light'):selected;
  document.documentElement.dataset.theme=mode;
  document.getElementById('mdf-theme').textContent=({system:'Auto',light:'Light',dark:'Dark'})[selected];
  let color=document.querySelector('meta[name="theme-color"]');if(!color){color=document.createElement('meta');color.name='theme-color';document.head.append(color)}
- color.content=mode==='dark'?'#161b1c':'#FAF9F6';
+ color.content=mode==='dark'?'#25221E':'#F3E6D6';
 }
 media.addEventListener?.('change',theme);theme();
 document.getElementById('mdf-theme').addEventListener('click',()=>{
  const options=['system','light','dark'];store(themeKey,options[(options.indexOf(currentTheme())+1)%options.length]);theme();
 });
 function font(){
- const value=Math.max(16,Math.min(24,Number(local(sizeKey,18))||18));
+ const value=Math.max(16,Math.min(24,Number(local(sizeKey,19))||18));
  document.documentElement.style.setProperty('--reader-size',value+'px');
  document.getElementById('mdf-size').textContent=value+'px';
 }
 font();
-document.getElementById('mdf-decrease').addEventListener('click',()=>{store(sizeKey,Math.max(16,(Number(local(sizeKey,18))||18)-2));font();saveProgress()});
-document.getElementById('mdf-increase').addEventListener('click',()=>{store(sizeKey,Math.min(24,(Number(local(sizeKey,18))||18)+2));font();saveProgress()});
+document.getElementById('mdf-decrease').addEventListener('click',()=>{store(sizeKey,Math.max(16,(Number(local(sizeKey,19))||18)-2));font();saveProgress()});
+document.getElementById('mdf-increase').addEventListener('click',()=>{store(sizeKey,Math.min(24,(Number(local(sizeKey,19))||18)+2));font();saveProgress()});
 topbar.querySelector('.mdf-back').addEventListener('click',event=>{
  try{
   if(document.referrer&&new URL(document.referrer).origin===location.origin&&new URL(document.referrer).pathname.startsWith(site.pathname)&&history.length>1){event.preventDefault();history.back()}

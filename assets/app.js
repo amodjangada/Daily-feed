@@ -131,11 +131,11 @@ function selectView(name){
  location.hash=name;
 }
 const media=window.matchMedia('(prefers-color-scheme: dark)');
-function storedTheme(){const t=safeRead(THEME,'system');return ['system','light','dark'].includes(t)?t:'system'}
+function storedTheme(){const t=safeRead(THEME,'light');return ['system','light','dark'].includes(t)?t:'system'}
 function applyTheme(){
  const t=storedTheme();document.documentElement.dataset.theme=t==='system'?(media.matches?'dark':'light'):t;
  $('#theme-button').textContent='Appearance: '+({system:'Auto',light:'Light',dark:'Dark'})[t];
- document.querySelector('meta[name="theme-color"]').content=document.documentElement.dataset.theme==='dark'?'#161b1c':'#FAF9F6';
+ document.querySelector('meta[name="theme-color"]').content=document.documentElement.dataset.theme==='dark'?'#25221E':'#F3E6D6';
 }
 async function refresh(force=false){
  if(!force&&Date.now()-lastRefresh<15000)return;
@@ -186,5 +186,41 @@ function init(){
    navigator.serviceWorker.register('./service-worker.js',{updateViaCache:'none'}).then(reg=>{reg.update().catch(()=>{});savedPaths().forEach(path=>cacheSaved(path))}).catch(()=>{});
  }
 }
+
+/* Keep the installed Home Screen app up to date after Pages deploys.
+   New versions reload once; unchanged code will not interrupt reading. */
+let siteReloadPending=false;
+async function checkSiteVersion(){
+ const installed=document.querySelector('meta[name="mdf-build"]')?.content;
+ if(!installed||siteReloadPending||!navigator.onLine)return;
+ try{
+  const response=await fetch('./version.json?check='+Date.now(),{cache:'no-store'});
+  if(!response.ok)return;
+  const data=await response.json();
+  if(typeof data.version!=='string'||!/^[0-9a-f]{12}$/.test(data.version)||data.version===installed)return;
+  siteReloadPending=true;
+  const target=new URL(location.href);
+  target.searchParams.set('build',data.version);
+  location.replace(target.href);
+ }catch{}
+}
+function updateWorker(){
+ if(!('serviceWorker' in navigator))return;
+ navigator.serviceWorker.getRegistration().then(reg=>reg?.update()).catch(()=>{});
+}
+if('serviceWorker' in navigator){
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{
+  const last=Number(sessionStorage.getItem('mdf-last-sw-reload')||0);
+  if(Date.now()-last<15000)return;
+  sessionStorage.setItem('mdf-last-sw-reload',String(Date.now()));
+  location.reload();
+ });
+}
+window.addEventListener('pageshow',checkSiteVersion);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){checkSiteVersion();updateWorker()}});
+window.addEventListener('online',checkSiteVersion);
+setInterval(()=>{if(!document.hidden)checkSiteVersion()},5*60*1000);
+
 init();
+checkSiteVersion();
 })();

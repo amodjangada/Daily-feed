@@ -45,6 +45,26 @@ app=(OUT / "assets/app.js").read_text(encoding="utf-8")
 check("refresh(true)" in app and "visibilitychange" in app, "Resume update checks missing")
 sw=(OUT / "service-worker.js").read_text(encoding="utf-8")
 check("'CACHE_SAVED'" in sw and "'REMOVE_SAVED'" in sw, "Offline save messages missing")
+# Contrast checks for Option B standard text and controls.
+def relative_luminance(hex_color):
+    values=[int(hex_color[i:i+2],16)/255 for i in (1,3,5)]
+    linear=[v/12.92 if v<=0.04045 else ((v+0.055)/1.055)**2.4 for v in values]
+    return 0.2126*linear[0]+0.7152*linear[1]+0.0722*linear[2]
+
+def contrast(a,b):
+    hi,lo=sorted((relative_luminance(a),relative_luminance(b)),reverse=True)
+    return (hi+0.05)/(lo+0.05)
+
+for label,foreground,background in (
+    ("article body", "#382E27", "#F3E6D6"),
+    ("card title", "#382E27", "#E8D8C2"),
+    ("secondary text", "#685849", "#E8D8C2"),
+    ("links", "#85412E", "#F3E6D6"),
+    ("woodland labels", "#3D5547", "#E8D8C2"),
+):
+    check(contrast(foreground,background)>=4.5,
+          "Insufficient text contrast for "+label)
+
 if errors:
     for problem in errors:
         print("FAIL:", problem)
