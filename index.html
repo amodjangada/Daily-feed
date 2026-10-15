@@ -1,53 +1,72 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102338"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="My Daily Feed"><title>My Daily Feed | Reading Library</title>
-<style>
-:root{font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#162538;background:#f5f7fa}*{box-sizing:border-box}body{margin:0}header{background:#102338;color:white;padding:42px max(20px,calc((100vw - 1000px)/2))}header small{color:#a6c5df;letter-spacing:.12em;text-transform:uppercase}h1{font-size:clamp(2.1rem,6vw,3.4rem);margin:9px 0}header p{max-width:700px;line-height:1.65;color:#d3e0ec}main{max-width:1000px;margin:32px auto;padding:0 20px}.controls{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0 28px}input,select{font:inherit;padding:13px 15px;background:white;border:1px solid #c9d2dd;border-radius:10px;color:#162538}input{flex:3;min-width:215px}select{flex:1;min-width:190px}h2{font-size:1.55rem}.day{margin:34px 0 10px;border-bottom:1px solid #cfd8e2;padding-bottom:10px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}.item{background:white;border:1px solid #dfe5ec;border-radius:15px;padding:20px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between}.item a{font-size:1.12rem;font-weight:700;color:#123c63;line-height:1.45;text-decoration:none}.item a:hover{text-decoration:underline}.meta{margin-top:15px;color:#596a7c;font-size:.85rem}.pill{display:inline-block;padding:5px 9px;border-radius:6px;background:#eaf2f9;color:#285176;font-size:.77rem;font-weight:650;margin-bottom:12px}#message{line-height:1.7;color:#52657a}footer{max-width:1000px;margin:55px auto 20px;padding:0 20px;font-size:.86rem;color:#64748b}@media(prefers-reduced-motion:no-preference){a{transition:color .15s}}@media print{header{background:white;color:black}header p{color:black}.controls{display:none}}
-</style></head><body>
-<header><small>Five independent reports, every day</small><h1>My Daily Feed</h1><p>Pick one topic and finish it on its own. Each report gives the facts, history, evidence, key views and sources you need. Read by date or subject.</p></header>
-<main><h2>Reading archive</h2><div class="controls"><input id="search" type="search" aria-label="Search reports" placeholder="Search reports and topics"><select id="subject" aria-label="Filter by subject"><option value="">All subjects</option><option value="AI & Technology">AI & Technology</option><option value="Philosophy & Psychology">Philosophy & Psychology</option><option value="Economics & Public Policy">Economics & Public Policy</option><option value="Sustainable Business">Sustainable Business</option><option value="Rotating Field">Science, History & World Affairs</option></select></div><div id="archive"></div><p id="message">Loading saved reports…</p></main>
-<footer>Each report is complete on its own. The archive updates when new HTML reports are added to the GitHub repository.</footer>
-<script>
-const categories=[['ai-technology','AI & Technology'],['philosophy-psychology','Philosophy & Psychology'],['economics-policy','Economics & Public Policy'],['sustainable-business','Sustainable Business'],['rotating-field','Rotating Field']];
-let docs=[];
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function category(d){let p=(d.path||'').toLowerCase();return categories.find(x=>p.includes(x[0]))?.[1]||'Other'}
-function date(d){let p=d.date||d.path||'';let m=p.match(/20\d{2}[-_/]\d{2}[-_/]\d{2}/);return m?m[0].replaceAll('/','-').replaceAll('_','-'):'Earlier reports'}
-function render(){let q=document.querySelector('#search').value.toLowerCase(),subject=document.querySelector('#subject').value;let rows=docs.filter(d=>(!subject||category(d)===subject)&&((d.title+' '+d.path+' '+category(d)).toLowerCase().includes(q)));rows.sort((a,b)=>date(b).localeCompare(date(a)));let groups=new Map;rows.forEach(d=>{let k=date(d);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(d)});document.querySelector('#archive').innerHTML=[...groups].map(([day,items])=>'<section><h2 class="day">'+esc(day)+'</h2><div class="grid">'+items.map(d=>'<article class="item"><div><span class="pill">'+esc(category(d))+'</span><div><a href="'+encodeURI(d.path).replace(/'/g,'%27')+'">'+esc(d.title)+'</a></div></div><div class="meta">Independent reading report</div></article>').join('')+'</div></section>').join('');document.querySelector('#message').textContent=rows.length?'':docs.length?'No reports match your search.':'No past HTML reports have been added yet. New editions will appear here once they are saved in the repository.'}
-document.querySelector('#search').addEventListener('input',render);document.querySelector('#subject').addEventListener('change',render);// Always request a fresh archive. Update on launch, return to the app, and while open.
-let lastCheck=0,activeRequest=null,failures=0;
-async function refreshFeed(force=false){
-  if(document.visibilityState==='hidden')return;
-  if(!force&&Date.now()-lastCheck<15000)return;
-  lastCheck=Date.now();
-  if(activeRequest)return activeRequest;
-  activeRequest=(async()=>{
-    try{
-      const url='./feeds.json?refresh='+Date.now();
-      const response=await fetch(url,{cache:'no-store',headers:{'Accept':'application/json'}});
-      if(!response.ok)throw new Error('HTTP '+response.status);
-      const next=await response.json();
-      if(!Array.isArray(next))throw new Error('Invalid report list');
-      const old=JSON.stringify(docs),current=JSON.stringify(next);
-      docs=next;failures=0;
-      if(old!==current||!document.querySelector('#archive').children.length)render();
-      else document.querySelector('#message').textContent='';
-    }catch(err){
-      failures++;
-      if(!docs.length)document.querySelector('#message').textContent='Unable to load reports. Check your connection; the app will retry automatically.';
-    }finally{activeRequest=null}
-  })();
-  return activeRequest;
-}
-refreshFeed(true);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshFeed(true)});
-window.addEventListener('pageshow',()=>refreshFeed(true));
-window.addEventListener('focus',()=>refreshFeed());
-window.addEventListener('online',()=>refreshFeed(true));
-setInterval(()=>refreshFeed(),60000);
-// Unregister older service workers if a previous version installed one.
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations().then(regs=>{
-    for(const reg of regs)if(reg.scope.startsWith(new URL('./',location.href).href))reg.unregister();
-  }).catch(()=>{});
-}
-</script></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#FAF9F6">
+  <meta name="description" content="Five self-contained learning reports each day. Read, save, and return to what matters.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Daily Feed">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="./assets/site.css">
+  <script defer src="./assets/app.js"></script>
+  <title>My Daily Feed — Your reading library</title>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="#today" class="brand" aria-label="My Daily Feed, go to latest edition">
+      <span class="brand-mark" aria-hidden="true">DF</span><span>My Daily Feed</span>
+    </a>
+    <button class="header-action" id="theme-button" type="button" aria-label="Change appearance">Appearance: Auto</button>
+  </div>
+</header>
+<main id="main" class="shell">
+  <section class="screen" id="today-screen" tabindex="-1" aria-labelledby="today-title">
+    <div class="eyebrow">A daily study habit</div>
+    <h1 class="page-title" id="today-title">Today's reading</h1>
+    <p class="page-subtitle" id="today-intro">Five independent guides. Choose a topic and learn at your own pace.</p>
+    <div id="featured-slot"></div>
+    <div class="section-heading"><h2>More in this edition</h2><span id="edition-count"></span></div>
+    <div class="article-list" id="today-list"></div>
+    <div class="section-heading"><h2>From the archive</h2><button type="button" class="small-link" data-go="archive">Browse all reports</button></div>
+    <div id="recent-slot"></div>
+  </section>
+  <section class="screen" id="archive-screen" tabindex="-1" aria-labelledby="archive-title" hidden>
+    <div class="eyebrow">Your knowledge library</div>
+    <h1 class="page-title" id="archive-title">All reports</h1>
+    <p class="page-subtitle">Find a report by date, topic, or title.</p>
+    <div class="controls">
+      <div><label class="field-label" for="search">Search reports</label><input id="search" class="field" type="search" placeholder="Search topics and titles" autocomplete="off"></div>
+      <div><label class="field-label" for="subject">Subject</label><select id="subject" class="field"><option value="">All subjects</option><option value="AI & Technology">AI & Technology</option><option value="Philosophy & Psychology">Philosophy & Psychology</option><option value="Economics & Public Policy">Economics & Public Policy</option><option value="Sustainable Business">Sustainable Business</option><option value="Rotating Field">Science, history & world affairs</option><option value="Other">Other</option></select></div>
+    </div>
+    <div id="archive-results"></div>
+  </section>
+  <section class="screen" id="saved-screen" tabindex="-1" aria-labelledby="saved-title" hidden>
+    <div class="eyebrow">Keep what matters</div>
+    <h1 class="page-title" id="saved-title">Saved articles</h1>
+    <p class="page-subtitle">Saved items remain on this device. Available articles can be read without a connection after their offline copy is stored.</p>
+    <div class="article-list" id="saved-list" style="margin-top:24px"></div>
+  </section>
+  <p id="feed-status" class="status" role="status" aria-live="polite">Loading reports…</p>
+  <p class="footnote">Five independent topics per edition. New reports appear as soon as GitHub Pages publishes them.</p>
+</main>
+<nav class="bottom-nav" aria-label="Main navigation">
+  <div class="nav-inner">
+    <button class="nav-tab" type="button" data-view="today" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3zM9 20v-7h6v7"/></svg><span>Today</span>
+    </button>
+    <button class="nav-tab" type="button" data-view="archive">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4m8-4v4M4 10h16"/></svg><span>Archive</span>
+    </button>
+    <button class="nav-tab" type="button" data-view="saved">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg><span>Saved</span>
+    </button>
+  </div>
+</nav>
+</body>
+</html>

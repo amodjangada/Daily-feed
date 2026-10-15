@@ -19,46 +19,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Build archive
+      - name: Build daily archive
+        run: python3 scripts/build_site.py
+      - name: Verify site
         run: |
-          python3 - <<'PY'
-          import os, zipfile, shutil, json, re, pathlib, html
-          out=pathlib.Path("_site")
-          out.mkdir(exist_ok=True)
-          archive=pathlib.Path("my-daily-feed-site.zip")
-          if archive.exists():
-              with zipfile.ZipFile(archive) as z:
-                  for info in z.infolist():
-                      p=pathlib.PurePosixPath(info.filename)
-                      if info.is_dir() or p.is_absolute() or '..' in p.parts or p.parts[0]=='__MACOSX': continue
-                      target=pathlib.Path("_unpacked").joinpath(*p.parts)
-                      target.parent.mkdir(parents=True,exist_ok=True)
-                      with z.open(info) as src,open(target,'wb') as dst: shutil.copyfileobj(src,dst)
-              unpack=pathlib.Path("_unpacked")
-              candidates=list(unpack.rglob("index.html"))
-              source=min((c.parent for c in candidates),key=lambda p:len(p.parts)) if candidates else unpack
-              shutil.copytree(source,out,dirs_exist_ok=True)
-          repo_reports=pathlib.Path("reports")
-          if repo_reports.exists():
-              shutil.copytree(repo_reports,out/"reports",dirs_exist_ok=True)
-          shutil.copy2("index.html",out/"index.html")
-          # Remove old service workers from packaged site builds.
-          for stale in ("sw.js","service-worker.js"):
-              (out/stale).unlink(missing_ok=True)
-          docs=[]
-          for f in sorted(out.rglob("*.html"),reverse=True):
-              rel=f.relative_to(out).as_posix()
-              if rel.lower()=="index.html":continue
-              raw=f.read_text(encoding="utf-8",errors="replace")[:30000]
-              match=re.search(r'<title[^>]*>(.*?)</title>',raw,re.I|re.S)
-              title=html.unescape(re.sub(r'<[^>]*>','',match.group(1))).strip() if match else f.stem.replace("-"," ").replace("_"," ").title()
-              date=re.search(r'20\d{2}[-_./]\d{1,2}[-_./]\d{1,2}',rel)
-              docs.append({'title':title or f.stem,'path':rel,'date':date.group(0) if date else ''})
-          (out/"feeds.json").write_text(json.dumps(docs,ensure_ascii=False,indent=2),encoding="utf-8")
-          (out/".nojekyll").touch()
-          print("Published HTML editions:",len(docs))
-          for d in docs:print(d["path"])
-          PY
+          python3 scripts/test_site.py
+          node --check assets/app.js
+          node --check assets/reader.js
+          node --check service-worker.js
       - name: Set up Pages
         uses: actions/configure-pages@v5
       - name: Upload site
