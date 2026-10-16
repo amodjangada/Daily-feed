@@ -192,12 +192,19 @@ function init(){
 let siteReloadPending=false;
 async function checkSiteVersion(){
  const installed=document.querySelector('meta[name="mdf-build"]')?.content;
- if(!installed||siteReloadPending||!navigator.onLine)return;
+ if(siteReloadPending||!navigator.onLine)return;
  try{
   const response=await fetch('./version.json?check='+Date.now(),{cache:'no-store'});
   if(!response.ok)return;
   const data=await response.json();
   if(typeof data.version!=='string'||!/^[0-9a-f]{12}$/.test(data.version)||data.version===installed)return;
+  // If an old HTML page somehow runs the new JS, the missing build tag
+  // must trigger an upgrade rather than silently disabling version checks.
+  if(!installed){
+    const attempts=Number(sessionStorage.getItem('mdf-bootstrap-attempts')||0);
+    if(attempts>=2)return;
+    sessionStorage.setItem('mdf-bootstrap-attempts',String(attempts+1));
+  }
   siteReloadPending=true;
   const target=new URL(location.href);
   target.searchParams.set('build',data.version);
@@ -216,7 +223,7 @@ if('serviceWorker' in navigator){
   location.reload();
  });
 }
-window.addEventListener('pageshow',checkSiteVersion);
+window.addEventListener('pageshow',()=>{checkSiteVersion();updateWorker()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){checkSiteVersion();updateWorker()}});
 window.addEventListener('online',checkSiteVersion);
 setInterval(()=>{if(!document.hidden)checkSiteVersion()},5*60*1000);

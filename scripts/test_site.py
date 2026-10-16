@@ -45,6 +45,8 @@ app=(OUT / "assets/app.js").read_text(encoding="utf-8")
 check("refresh(true)" in app and "visibilitychange" in app, "Resume update checks missing")
 sw=(OUT / "service-worker.js").read_text(encoding="utf-8")
 check("'CACHE_SAVED'" in sw and "'REMOVE_SAVED'" in sw, "Offline save messages missing")
+check('clients.matchAll' in sw and 'client.navigate' in sw, 'Home Screen upgrade bridge missing')
+check('checkSiteVersion()' in app and 'mdf-bootstrap-attempts' in app, 'Homepage update check incomplete')
 # Contrast checks for Option B standard text and controls.
 def relative_luminance(hex_color):
     values=[int(hex_color[i:i+2],16)/255 for i in (1,3,5)]

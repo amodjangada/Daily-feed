@@ -1,12 +1,35 @@
 /* Network-first updates. Cache the shell and user-saved articles, not all visited reports. */
-const VERSION='mdf-v4-terracotta-linen';
+const VERSION='mdf-v5-home-screen-upgrade';
 const SHELL=VERSION+'-shell', SAVED='mdf-saved-offline-v1';
 const BASE=new URL(self.registration.scope);
 const SHELL_FILES=['./','./index.html','./assets/site.css','./assets/app.js','./assets/reader.css','./assets/reader.js','./manifest.webmanifest','./assets/icon.svg','./assets/landscape.svg','./assets/apple-touch-icon.png','./assets/icon-192.png','./assets/icon-512.png','./feeds.json'];
 const canonical=url=>new Request(new URL(url,BASE).origin+new URL(url,BASE).pathname,{method:'GET'});
 const shellPaths=new Set(SHELL_FILES.map(p=>new URL(p,BASE).pathname));
 self.addEventListener('install',event=>event.waitUntil(caches.open(SHELL).then(cache=>cache.addAll(SHELL_FILES.map(p=>new URL(p,BASE)))).then(()=>self.skipWaiting())));
-self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('mdf-v')&&k!==SHELL).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener('activate',event=>event.waitUntil((async()=>{
+  const keys=await caches.keys();
+  const stale=keys.filter(k=>k.startsWith('mdf-v')&&k!==SHELL);
+  const upgrading=stale.length>0;
+  await Promise.all(stale.map(k=>caches.delete(k)));
+  await self.clients.claim();
+
+  // The original iPhone installation refreshed only feeds.json.
+  // It never reloaded HTML/CSS on return from the Home Screen.
+  // When this new worker activates, navigate the old homepage once.
+  // Article readers are not interrupted in the middle of a report.
+  if(!upgrading)return;
+  const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
+  for(const client of windows){
+    try{
+      const url=new URL(client.url);
+      const isHome=url.origin===BASE.origin &&
+        (url.pathname===BASE.pathname||url.pathname===BASE.pathname+'index.html');
+      if(!isHome)continue;
+      url.searchParams.set('_mdf_upgrade','5');
+      await client.navigate(url.href);
+    }catch{/* A suspended iOS app may reject navigation; next launch still checks. */}
+  }
+})()));
 self.addEventListener('fetch',event=>{
  const request=event.request;
  if(request.method!=='GET')return;
