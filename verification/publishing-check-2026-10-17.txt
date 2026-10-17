@@ -1,0 +1,5 @@
+Daily Feed publishing verification
+Date: 17 October 2026
+This is a permanent test file requested by the library owner.
+ChatGPT successfully wrote this file through the connected GitHub integration.
+This file is not a daily research report, and does not by itself verify scheduled publishing.
