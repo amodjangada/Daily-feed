@@ -36,3 +36,41 @@ jobs:
       - name: Deploy site
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify public library after deployment
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python3 - <<'PY'
+          import json, os, time, urllib.request
+          from pathlib import Path
+          from urllib.parse import urljoin
+          root = os.environ["PAGES_URL"].rstrip("/") + "/"
+          expected = json.loads(Path("_site/feeds.json").read_text(encoding="utf-8"))
+          assert expected, "No reports in built feed"
+          newest_date = max(e.get("date", "") for e in expected)
+          newest = [e for e in expected if e.get("date") == newest_date]
+          print(f"Expect {len(newest)} reports dated {newest_date}")
+          last = None
+          for attempt in range(18):
+              try:
+                  req = urllib.request.Request(urljoin(root, "feeds.json") + "?verify=" + str(attempt),
+                                               headers={"Cache-Control": "no-cache"})
+                  with urllib.request.urlopen(req, timeout=20) as resp:
+                      live = json.load(resp)
+                  expected_paths = {e["path"] for e in newest}
+                  live_paths = {e["path"] for e in live}
+                  if not expected_paths.issubset(live_paths):
+                      raise RuntimeError("Latest reports missing from live index: " + str(expected_paths - live_paths))
+                  for item in newest:
+                      with urllib.request.urlopen(urljoin(root, item["path"]), timeout=20) as resp:
+                          if resp.status != 200 or b"<html" not in resp.read(1500).lower():
+                              raise RuntimeError("Article unavailable: " + item["path"])
+                  print("Verified public index and newest articles:", len(newest))
+                  break
+              except Exception as exc:
+                  last = exc
+                  print(f"Public verification attempt {attempt+1}/18: {exc}", flush=True)
+                  time.sleep(10)
+          else:
+              raise SystemExit(f"Deployment could not be verified: {last}")
+          PY
