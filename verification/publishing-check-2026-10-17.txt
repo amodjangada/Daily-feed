@@ -1,3 +1,0 @@
-Daily Feed GitHub connector write verification
-Date: 2026-10-17
-Purpose: temporary publishing pipeline check; not an article.
