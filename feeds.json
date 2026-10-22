@@ -23,5 +23,65 @@
     "title": "Why Sea Level Rises Even in Years When It Slows — 15 October 2026",
     "path": "reports/2026-10-15/rotating-field.html",
     "date": "2026-10-15"
+  },
+  {
+    "date": "2026-10-16",
+    "path": "reports/2026-10-16/ai-technology.html",
+    "title": "When Can We Trust an AI Agent? — 16 October 2026",
+    "category": "AI & Technology"
+  },
+  {
+    "date": "2026-10-16",
+    "path": "reports/2026-10-16/philosophy-psychology.html",
+    "title": "Why We Misjudge Risk — and How to Think More Clearly — 16 October 2026",
+    "category": "Philosophy & Psychology"
+  },
+  {
+    "date": "2026-10-16",
+    "path": "reports/2026-10-16/economics-policy.html",
+    "title": "Why Housing Becomes Unaffordable in Growing Cities — 16 October 2026",
+    "category": "Economics & Public Policy"
+  },
+  {
+    "date": "2026-10-16",
+    "path": "reports/2026-10-16/sustainable-business.html",
+    "title": "Green Hydrogen: Where It Makes Sense — and Where It Does Not — 16 October 2026",
+    "category": "Sustainable Business"
+  },
+  {
+    "date": "2026-10-16",
+    "path": "reports/2026-10-16/rotating-field.html",
+    "title": "Why Antibiotics Stop Working: The Evolution of Resistance — 16 October 2026",
+    "category": "Rotating Field"
+  },
+  {
+    "date": "2026-10-17",
+    "path": "reports/2026-10-17/ai-technology.html",
+    "title": "Why Does Cheaper AI Not Guarantee Better Decisions? — 17 October 2026",
+    "category": "AI & Technology"
+  },
+  {
+    "date": "2026-10-17",
+    "path": "reports/2026-10-17/philosophy-psychology.html",
+    "title": "Why Does Economic Growth Fail to Measure a Good Life? — 17 October 2026",
+    "category": "Philosophy & Psychology"
+  },
+  {
+    "date": "2026-10-17",
+    "path": "reports/2026-10-17/economics-policy.html",
+    "title": "Who Pays for India's Instant Payment Network? — 17 October 2026",
+    "category": "Economics & Public Policy"
+  },
+  {
+    "date": "2026-10-17",
+    "path": "reports/2026-10-17/sustainable-business.html",
+    "title": "Can Cheap Solar Power Make an Electricity System Cheap? — 17 October 2026",
+    "category": "Sustainable Business"
+  },
+  {
+    "date": "2026-10-17",
+    "path": "reports/2026-10-17/rotating-field.html",
+    "title": "Why Does Antibiotic Resistance Keep Growing? — 17 October 2026",
+    "category": "Rotating Field"
   }
 ]
